@@ -4,6 +4,7 @@ import re
 import random
 from datetime import timedelta
 import json
+from turtle import pos
 from telegram import InputMediaPhoto, InputMediaVideo
 from django.core.management.base import BaseCommand
 from rezka_bot.models import UserAdmin, Post
@@ -284,6 +285,8 @@ def get_message_text_of_comment_for_admin_to_choose(post, comment_id):
     comment = comments[comment_id]
     if len(comment[0]) < 4096:
         message = f"Комментарий к фильму <b>{post.film_name}</b>\n"
+        message += f"{post.film_date}\n"
+        message += f"Режиссер {post.producer}\n"
         message += (
             f"Коментарий <b>{comment_id + 1} из {len(comments)}</b>\n\n"
             + comment[0]
