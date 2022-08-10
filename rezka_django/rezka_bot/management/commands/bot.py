@@ -480,7 +480,7 @@ def request_video(update, context):
         "Пришлите видео файл",
         reply_markup=ReplyKeyboardMarkup([["Без видео 🙅"]], one_time_keyboard=True),
     )
-    return save_video
+    return SAVE_VIDEO
 
 
 def save_new_comment(update, context):
