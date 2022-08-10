@@ -391,6 +391,13 @@ def post_scheduled_film(context):
     all_approved_posts = Post.objects.filter(status=Post.Status.APPROVED).order_by(
         "scheduled_for"
     )
+    if len(all_approved_posts) < 4:
+        admin = UserAdmin.objects.first()
+        context.bot.send_message(
+            admin.external_id,
+            "Фильмов осталось на одни сутки - добавь еще используя команду /start",
+            parse_mode="HTML",
+        )
     last_post = all_approved_posts[0] if all_approved_posts else None
     if last_post:
         if last_post.scheduled_for < timezone.now():
