@@ -1,5 +1,6 @@
 import os
 import csv
+from os.path import exists
 import re
 import random
 from datetime import timedelta
@@ -97,11 +98,8 @@ def construct_keyboard_for_comment(post, comment_id):
 
 
 def get_comments_by_post(post):
-    file_list = os.listdir("data/comments")
-    for file in file_list:
-        if file.startswith(str(post.film_id)):
-            comments_file = "data/comments/" + file
-            break
+    if exists(f"data/comments/{post.film_id}.txt"):
+        comments_file = "data/comments/" + f"{post.film_id}.txt"
     else:
         comments_file = None
         print(f"No comments for {post.film_name}")
