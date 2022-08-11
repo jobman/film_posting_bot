@@ -22,6 +22,9 @@ class UserAdmin(models.Model):
 
 
 class Post(models.Model):
+    def __str__(self):
+        return f"{self.film_name} {self.film_date}"
+
     profile = models.ForeignKey(
         to="rezka_bot.UserAdmin",
         verbose_name="Профиль",
