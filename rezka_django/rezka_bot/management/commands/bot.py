@@ -285,6 +285,7 @@ def get_message_text_of_comment_for_admin_to_choose(post, comment_id):
         message = f"Комментарий к фильму <b>{post.film_name}</b>\n"
         message += f"{post.film_date}\n"
         message += f"Режиссер {post.producer}\n"
+        message += f"id фильма {post.film_id}\n"
         message += (
             f"Коментарий <b>{comment_id + 1} из {len(comments)}</b>\n\n"
             + comment[0]
@@ -385,11 +386,19 @@ def choose_good_film_from_csv_file(file_name="data/films.csv", admin=None, updat
     create_post(chosen_film, admin, update)
 
 
+last_alarm_time = None
+
+
 def post_scheduled_film(context):
     all_approved_posts = Post.objects.filter(status=Post.Status.APPROVED).order_by(
         "scheduled_for"
     )
-    if len(all_approved_posts) < 4:
+    global last_alarm_time
+    if len(all_approved_posts) < 4 and (
+        last_alarm_time is None
+        or timezone.now() > last_alarm_time + timedelta(minutes=60)
+    ):
+        last_alarm_time = timezone.now()
         admin = UserAdmin.objects.first()
         context.bot.send_message(
             admin.external_id,
@@ -522,6 +531,11 @@ def no_video(update, context):
     return ConversationHandler.END
 
 
+def count_scheduled_posts(update, context):
+    count = Post.objects.filter(status=Post.Status.APPROVED).count()
+    update.message.reply_text(f"Всего запланированных постов: {count}")
+
+
 class Command(BaseCommand):
     help = "Телеграм бот"
 
@@ -563,6 +577,9 @@ class Command(BaseCommand):
 
         comment_buttons_handler = CallbackQueryHandler(keyboard_handler)
         updater.dispatcher.add_handler(comment_buttons_handler)
+
+        count_scheduled_posts_handler = CommandHandler("count", count_scheduled_posts)
+        updater.dispatcher.add_handler(count_scheduled_posts_handler)
 
         updater.job_queue.run_repeating(post_scheduled_film, interval=7 * 60, first=0)
 
