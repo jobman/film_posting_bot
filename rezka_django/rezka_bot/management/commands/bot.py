@@ -506,7 +506,7 @@ def save_new_comment(update, context):
     data = context.user_data["data"]
     button_type, film_id, comment_id = data.split("_")
 
-    return save_video
+    return SAVE_VIDEO
 
 
 def save_video(update, context):
