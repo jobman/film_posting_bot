@@ -1,5 +1,5 @@
 comments_dir = "rezka_django/data/comments/"
-file_number = 10224
+file_number = 10989
 import os
 import json
 

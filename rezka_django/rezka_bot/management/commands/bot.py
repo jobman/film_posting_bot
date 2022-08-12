@@ -335,7 +335,7 @@ def create_post(post_dict, admin, update):
     post.film_date = post_dict["date"]
     file_list = os.listdir("data/posters")
     for file in file_list:
-        if file.startswith(post_dict["film_id"]):
+        if file.startswith(post_dict["film_id"]+"."):
             post.image_file_name = "data/posters/" + file
             break
 
