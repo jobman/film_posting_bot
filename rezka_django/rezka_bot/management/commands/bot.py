@@ -177,36 +177,8 @@ def schedule_post_with_choosen_comment(post, comment_id, update, context):
     )
     last_post = all_approved_posts[0] if all_approved_posts else None
     if last_post:
-        post.random_shift_for_posting = random.randint(-5, 5)
-        signum_this_post = 1 if post.random_shift_for_posting > 0 else -1
-        signum_last_post = 1 if last_post.random_shift_for_posting > 0 else -1
-        if last_post.scheduled_for_type == Post.Scheduled_for_type.MORNING:
-            post.scheduled_for_type = Post.Scheduled_for_type.AFTERNOON
-            post.scheduled_for = (
-                last_post.scheduled_for
-                + timedelta(hours=4)
-                + signum_this_post * timedelta(minutes=post.random_shift_for_posting)
-                - signum_last_post
-                * timedelta(minutes=abs(last_post.random_shift_for_posting))
-            )
-        elif last_post.scheduled_for_type == Post.Scheduled_for_type.AFTERNOON:
-            post.scheduled_for_type = Post.Scheduled_for_type.EVENING
-            post.scheduled_for = (
-                last_post.scheduled_for
-                + timedelta(hours=8)
-                + signum_this_post * timedelta(minutes=post.random_shift_for_posting)
-                - signum_last_post
-                * timedelta(minutes=abs(last_post.random_shift_for_posting))
-            )
-        elif last_post.scheduled_for_type == Post.Scheduled_for_type.EVENING:
-            post.scheduled_for_type = Post.Scheduled_for_type.MORNING
-            post.scheduled_for = (
-                last_post.scheduled_for
-                + timedelta(hours=12)
-                + signum_this_post * timedelta(minutes=post.random_shift_for_posting)
-                - signum_last_post
-                * timedelta(minutes=abs(last_post.random_shift_for_posting))
-            )
+        post.scheduled_for = last_post.scheduled_for + timedelta(hours=24)
+
     else:
         # tzinfo=pytz.timezone("Europe/Kiev")
         post.random_shift_for_posting = 0
@@ -335,7 +307,7 @@ def create_post(post_dict, admin, update):
     post.film_date = post_dict["date"]
     file_list = os.listdir("data/posters")
     for file in file_list:
-        if file.startswith(post_dict["film_id"]+"."):
+        if file.startswith(post_dict["film_id"] + "."):
             post.image_file_name = "data/posters/" + file
             break
 
